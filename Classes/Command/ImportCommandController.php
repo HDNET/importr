@@ -26,9 +26,9 @@ class ImportCommandController extends Command
      * ImportCommandController constructor.
      * @param string|null $name
      */
-    public function __construct(string $name = null)
+    public function __construct(protected Manager $manager)
     {
-        parent::__construct($name);
+        parent::__construct(null);
     }
 
     /**
@@ -36,7 +36,7 @@ class ImportCommandController extends Command
      * @param OutputInterface $output
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output):int
     {
         $this->initializeServiceManagerCommand();
 
@@ -60,10 +60,9 @@ class ImportCommandController extends Command
         );
         $this->addFlashMessage($message);
 
-        $manager = GeneralUtility::makeInstance(Manager::class);
         try {
             // let the manager run the imports now
-            $manager->runImports();
+            $this->manager->runImports();
         } catch (\Exception $e) {
             $message = GeneralUtility::makeInstance(
                 FlashMessage::class,

@@ -10,6 +10,7 @@ use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Documentation for configuration
@@ -74,7 +75,7 @@ class Strategy extends AbstractEntity
      */
     public function getRawConfiguration()
     {
-        if ($config = GeneralUtility::getUrl($this->getRealFilePath($this->configurationFile))) {
+        if ($this->configurationFile && $config = GeneralUtility::getUrl($this->getRealFilePath($this->configurationFile))) {
             return $config;
         }
 
@@ -96,7 +97,7 @@ class Strategy extends AbstractEntity
      */
     public function getRawResources()
     {
-        if ($resources = GeneralUtility::getUrl($this->getRealFilePath($this->resourcesFile))) {
+        if ($this->resourcesFile && $resources = GeneralUtility::getUrl($this->getRealFilePath($this->resourcesFile))) {
             return $resources;
         }
 
@@ -116,7 +117,7 @@ class Strategy extends AbstractEntity
      */
     public function getRawTargets()
     {
-        if ($targets = GeneralUtility::getUrl($this->getRealFilePath($this->targetsFile))) {
+        if ($this->targetsFile && $targets = GeneralUtility::getUrl($this->getRealFilePath($this->targetsFile))) {
             return $targets;
         }
 

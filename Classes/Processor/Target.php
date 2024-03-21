@@ -66,6 +66,6 @@ class Target
         #    [$configuration, $entry]
         #);
 
-        return $result[1];
+        return $entry;
     }
 }

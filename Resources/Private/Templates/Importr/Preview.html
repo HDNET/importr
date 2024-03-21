@@ -1,13 +1,12 @@
 {namespace importr=HDNET\Importr\ViewHelpers}
-<f:layout name="Backend" />
+<f:layout name="Module"/>
 
-<f:section name="IconButtons">
+<f:section name="Content">
+
 	<a href="{f:uri.action(action:'index')}" title="Cancel Import" class="btn btn-default btn-sm">
 		<core:icon identifier="actions-move-left"/>
 	</a>
-</f:section>
 
-<f:section name="Content">
 	<h1>
 		<f:translate key="LLL:EXT:importr/Resources/Private/Language/locallang.xlf:importr" />
 	</h1>

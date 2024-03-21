@@ -11,11 +11,14 @@ use HDNET\Importr\Domain\Repository\StrategyRepository;
 use HDNET\Importr\Service\ImportServiceInterface;
 use HDNET\Importr\Service\Manager;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Backend\Template\ModuleTemplate;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Description of ImportrController
@@ -54,7 +57,8 @@ class ImportrController extends ActionController
         StrategyRepository $strategyRepository,
         ImportRepository $importRepository,
         Manager $importManager,
-        ImportServiceInterface $importService
+        ImportServiceInterface $importService,
+        protected ModuleTemplateFactory $moduleTemplateFactory
     ) {
         $this->resourceFactory = $resourceFactory;
         $this->strategyRepository = $strategyRepository;
@@ -65,6 +69,7 @@ class ImportrController extends ActionController
 
     public function indexAction():ResponseInterface
     {
+        $viewVariables = [];
         $combinedIdentifier = GeneralUtility::_GP('id');
         if (isset($combinedIdentifier) && \is_string($combinedIdentifier)) {
             $folder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($combinedIdentifier);
@@ -73,11 +78,13 @@ class ImportrController extends ActionController
                 $files[$file->getStorage()
                     ->getUid() . ':' . $file->getIdentifier()] = $file->getName();
             }
-            $this->view->assign('folder', $files);
+            $viewVariables['folder'] = $files;
         }
-        $this->view->assign('imports', $this->importRepository->findUserQueue());
+        $viewVariables['imports'] = $this->importRepository->findUserQueue();
 
-        return $this->htmlResponse($this->view->render());
+        return $this->createModuleTemplate()
+            ->assignMultiple($viewVariables)
+            ->renderResponse('Index');
     }
 
     /**
@@ -86,9 +93,13 @@ class ImportrController extends ActionController
     public function importAction($identifier):ResponseInterface
     {
         $file = $this->resourceFactory->getObjectFromCombinedIdentifier($identifier);
-        $this->view->assign('file', $file);
-        $this->view->assign('strategies', $this->strategyRepository->findAllUser());
-        return $this->htmlResponse($this->view->render());
+        $viewVariables = [
+            'file' => $file,
+            'strategies' => $this->strategyRepository->findAllUser(),
+        ];
+        return $this->createModuleTemplate()
+            ->assignMultiple($viewVariables)
+            ->renderResponse('Import');
     }
 
     /**
@@ -98,12 +109,19 @@ class ImportrController extends ActionController
     public function previewAction($identifier, Strategy $strategy):ResponseInterface
     {
         $file = $this->resourceFactory->getObjectFromCombinedIdentifier($identifier);
-        $this->view->assign('filepath', $file->getPublicUrl());
-        $this->view->assign('strategy', $strategy);
 
-        $previewData = $this->importManager->getPreview($strategy, $file->getPublicUrl());
-        $this->view->assign('preview', $previewData);
-        return $this->htmlResponse($this->view->render());
+        $filePath = $file->getForLocalProcessing();
+        // @todo check path (absolute)
+        $previewData = $this->importManager->getPreview($strategy, $filePath);
+
+        return $this->createModuleTemplate()
+            ->assignMultiple([
+                // @todo better the file ID
+                'filepath' => $filePath,
+                'strategy' => $strategy,
+                'preview' => $previewData,
+            ])
+            ->renderResponse('Preview');
     }
 
     /**
@@ -139,5 +157,12 @@ class ImportrController extends ActionController
         $import->reset();
         $this->importRepository->update($import);
         return $this->redirect('index');
+    }
+
+    protected function createModuleTemplate(): ModuleTemplate
+    {
+        return $this->moduleTemplateFactory->create($this->request)
+            ->setFlashMessageQueue($this->getFlashMessageQueue())
+            ->setModuleClass('tx-impotr');
     }
 }

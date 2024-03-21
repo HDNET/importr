@@ -44,23 +44,23 @@
 				<f:if condition="{import.amount}">
 
 					<div class="progress">
-						<div class="progress-bar progress-bar-success" style="width: {import.insertedPercentage}%">
+						<div class="progress-bar bg-success" style="width: {import.insertedPercentage}%">
 							<f:format.number>{import.insertedPercentage}</f:format.number>
 							%
 						</div>
-						<div class="progress-bar progress-bar-info" style="width: {import.ignoredPercentage}%">
+						<div class="progress-bar bg-dark" style="width: {import.ignoredPercentage}%">
 							<f:format.number>{import.ignoredPercentage}</f:format.number>
 							%
 						</div>
-						<div class="progress-bar progress-bar-info" style="width: {import.updatedPercentage}%">
+						<div class="progress-bar bg-info" style="width: {import.updatedPercentage}%">
 							<f:format.number>{import.updatedPercentage}</f:format.number>
 							%
 						</div>
-						<div class="progress-bar progress-bar-warning" style="width: {import.unknownsPercentage}%">
+						<div class="progress-bar bg-warning" style="width: {import.unknownsPercentage}%">
 							<f:format.number>{import.unknownsPercentage}</f:format.number>
 							%
 						</div>
-						<div class="progress-bar progress-bar-danger" style="width: {import.errorsPercentage}%">
+						<div class="progress-bar bg-danger" style="width: {import.errorsPercentage}%">
 							<f:format.number>{import.errorsPercentage}</f:format.number>
 							%
 						</div>
@@ -103,9 +103,10 @@
 
 	<h1>Legende</h1>
 
-	<span class="label label-success">Success (Insert)</span>
-	<span class="label label-info">Info (Update / Ignored)</span>
-	<span class="label label-warning">Warning</span>
-	<span class="label label-danger">Error</span>
+	<span class="label bg-success p-1">Success (Insert)</span>
+	<span class="label bg-info p-1">Info (Update / Ignored)</span>
+	<span class="label bg-dark p-1">Info (Ignored)</span>
+	<span class="label bg-warning p-1">Warning</span>
+	<span class="label bg-danger p-1">Error</span>
 
 </f:section>

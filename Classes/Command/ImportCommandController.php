@@ -10,11 +10,10 @@ use HDNET\Importr\Service\Manager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
-
 /**
  * ImportCommandController
  *
@@ -24,19 +23,12 @@ class ImportCommandController extends Command
 {
 
     /**
-     * @var object|\Psr\Log\LoggerAwareInterface|\TYPO3\CMS\Core\SingletonInterface|ObjectManager
-     */
-    protected $objectManager;
-
-    /**
      * ImportCommandController constructor.
      * @param string|null $name
      */
     public function __construct(string $name = null)
     {
         parent::__construct($name);
-
-        $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
     }
 
     /**
@@ -64,11 +56,11 @@ class ImportCommandController extends Command
             FlashMessage::class,
             '',
             'Initializing ServiceManager',
-            FlashMessage::INFO
+            \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO
         );
         $this->addFlashMessage($message);
 
-        $manager = $this->objectManager->get(Manager::class);
+        $manager = GeneralUtility::makeInstance(Manager::class);
         try {
             // let the manager run the imports now
             $manager->runImports();
@@ -77,7 +69,7 @@ class ImportCommandController extends Command
                 FlashMessage::class,
                 '',
                 'An Error occured: ' . $e->getCode() . ': ' . $e->getMessage(),
-                FlashMessage::ERROR
+                \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR
             );
             $this->addFlashMessage($message);
 

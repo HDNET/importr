@@ -9,17 +9,13 @@ use HDNET\Importr\Domain\Repository\StrategyRepository;
 use HDNET\Importr\Exception\ReinitializeException;
 use HDNET\Importr\Service\ImportServiceInterface;
 use HDNET\Importr\Service\ManagerInterface;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Configuration
  */
 class Configuration
 {
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
 
     /**
      * @var StrategyRepository
@@ -34,13 +30,11 @@ class Configuration
     /**
      * Configuration constructor.
      *
-     * @param Dispatcher $dispatcher
      * @param StrategyRepository $strategyRepository
      * @param ImportServiceInterface $importService
      */
-    public function __construct(Dispatcher $dispatcher, StrategyRepository $strategyRepository, ImportServiceInterface $importService)
+    public function __construct(protected EventDispatcherInterface $eventDispatcher, StrategyRepository $strategyRepository, ImportServiceInterface $importService)
     {
-        $this->dispatcher = $dispatcher;
         $this->strategyRepository = $strategyRepository;
         $this->importService = $importService;
     }
@@ -106,11 +100,13 @@ class Configuration
      */
     protected function emitSignal($name, array &$configuration)
     {
-        $this->dispatcher->dispatch(
-            __CLASS__,
-            $name,
-            [$this, $configuration]
-        );
+
+        // @todo migrate to events
+        #$this->dispatcher->dispatch(
+        #    __CLASS__,
+        #    $name,
+        #    [$this, $configuration]
+        #);
     }
 
     /**

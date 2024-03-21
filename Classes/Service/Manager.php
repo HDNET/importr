@@ -10,9 +10,9 @@ use HDNET\Importr\Domain\Repository\ImportRepository;
 use HDNET\Importr\Exception\ReinitializeException;
 use HDNET\Importr\Processor\Configuration;
 use HDNET\Importr\Processor\Resource;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * Service Manager
@@ -28,20 +28,11 @@ class Manager implements ManagerInterface
      */
     protected $importRepository;
 
-    /**
-     * @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
-     */
-    protected $signalSlotDispatcher;
 
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
      */
     protected $persistenceManager;
-
-    /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    protected $objectManager;
 
     /**
      * @var \HDNET\Importr\Processor\Configuration
@@ -55,16 +46,13 @@ class Manager implements ManagerInterface
 
     public function __construct(
         ImportRepository $importRepository,
-        Dispatcher $signalSlotDispatcher,
+        protected EventDispatcherInterface $eventDispatcher,
         PersistenceManager $persistenceManager,
-        ObjectManager $objectManager,
         Configuration $configuration,
         Resource $resource
     ) {
         $this->importRepository = $importRepository;
-        $this->signalSlotDispatcher = $signalSlotDispatcher;
         $this->persistenceManager = $persistenceManager;
-        $this->objectManager = $objectManager;
         $this->configuration = $configuration;
         $this->resource = $resource;
     }
@@ -167,7 +155,7 @@ class Manager implements ManagerInterface
         $resources = [];
         $resourceConfiguration = $strategy->getResources();
         foreach ($resourceConfiguration as $resource => $configuration) {
-            $object = $this->objectManager->get($resource);
+            $object = GeneralUtility::makeInstance($resource);
             $object->start($strategy, $filepath);
             $object->setConfiguration($configuration);
             $resources[$resource] = $object;
@@ -194,7 +182,7 @@ class Manager implements ManagerInterface
                 $targets = $this->addTargets($configuration, $import, $targets);
                 continue;
             }
-            $object = $this->objectManager->get($target);
+            $object = GeneralUtility::makeInstance($target);
             $object->setConfiguration($configuration);
             $object->getConfiguration();
             $object->start($import->getStrategy());
@@ -220,7 +208,7 @@ class Manager implements ManagerInterface
                 $this->endTargets($configuration, $import);
                 continue;
             }
-            $object = $this->objectManager->get($target);
+            $object = GeneralUtility::makeInstance($target);
             $object->setConfiguration($configuration);
             $object->getConfiguration();
             $object->end($import->getStrategy());
@@ -249,10 +237,12 @@ class Manager implements ManagerInterface
      */
     protected function emitSignal($name, Import $import)
     {
-        $this->signalSlotDispatcher->dispatch(
-            __CLASS__,
-            $name,
-            [$this, $import]
-        );
+
+        // @todo migrate to events
+        #$this->signalSlotDispatcher->dispatch(
+        #    __CLASS__,
+        #    $name,
+        #    [$this, $import]
+        #);
     }
 }

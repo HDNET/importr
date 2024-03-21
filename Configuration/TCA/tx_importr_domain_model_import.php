@@ -23,29 +23,15 @@ return [
         'starttime' => [
             'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.starttime',
             'config' => [
-                'type' => 'input',
-                'size' => 13,
-                'max' => 20,
-                'eval' => 'datetime',
-                'checkbox' => 0,
-                'default' => 0,
-                'range' => [
-                    'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-                ],
+                'type' => 'datetime',
+                'format' => 'datetime',
             ],
         ],
         'endtime' => [
             'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.endtime',
             'config' => [
-                'type' => 'input',
-                'size' => 13,
-                'max' => 20,
-                'eval' => 'datetime',
-                'checkbox' => 0,
-                'default' => 0,
-                'range' => [
-                    'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-                ],
+                'type' => 'datetime',
+                'format' => 'datetime',
             ],
         ],
         'pointer' => [
@@ -107,29 +93,8 @@ return [
         'filepath' => [
             'label' => 'LLL:EXT:importr/Resources/Private/Language/locallang.xlf:filepath',
             'config' => [
-                'type' => 'input',
-                'size' => 50,
-                'eval' => 'trim,required',
-                'wizards' => [
-                    '_PADDING' => 2,
-                    'link' => [
-                        'type' => 'popup',
-                        'title' => 'Link',
-                        'icon' => 'link_popup.gif',
-                        'module' => [
-                            'name' => 'wizard_element_browser',
-                            'urlParameters' => [
-                                'mode' => 'wizard',
-                                'act' => 'file'
-                            ]
-                        ],
-                        'JSopenParams' => 'height=300,width=500,status=0,menubar=0,scrollbars=1',
-                        'params' => [
-                            'blindLinkOptions' => 'page,url,mail,spec,folder',
-                            'allowedExtensions' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['textfile_ext'],
-                        ]
-                    ],
-                ],
+                'type' => 'link',
+                'allowedTypes' => ['file'],
             ],
         ],
         'strategy' => [

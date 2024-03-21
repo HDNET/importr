@@ -21,6 +21,7 @@ class PasswordHashService
     public function hash($password)
     {
         if (ExtensionManagementUtility::isLoaded('saltedpasswords')) {
+            // @todo migration for v12
             $salter = SaltFactory::getSaltingInstance(null, 'FE');
             $password = $salter->getHashedPassword($password);
 

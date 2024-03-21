@@ -31,7 +31,7 @@ class ImportRepository extends Repository
             $query->greaterThan('starttime', \time() - 60 * 60 * 24 * $days)
         ];
 
-        $query->matching($query->logicalAnd($conditions));
+        $query->matching($query->logicalAnd(...$conditions));
 
         $query->setOrderings(['starttime' => Query::ORDER_DESCENDING]);
 
@@ -52,7 +52,7 @@ class ImportRepository extends Repository
             $query->lessThan('endtime', 1),
         ];
 
-        $query->matching($query->logicalAnd($conditions));
+        $query->matching($query->logicalAnd(...$conditions));
 
         $query->setOrderings(['starttime' => Query::ORDER_ASCENDING]);
 

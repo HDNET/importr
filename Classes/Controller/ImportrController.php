@@ -10,6 +10,7 @@ use HDNET\Importr\Domain\Repository\ImportRepository;
 use HDNET\Importr\Domain\Repository\StrategyRepository;
 use HDNET\Importr\Service\ImportServiceInterface;
 use HDNET\Importr\Service\Manager;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -62,7 +63,7 @@ class ImportrController extends ActionController
         $this->importService = $importService;
     }
 
-    public function indexAction()
+    public function indexAction():ResponseInterface
     {
         $combinedIdentifier = GeneralUtility::_GP('id');
         if (isset($combinedIdentifier) && \is_string($combinedIdentifier)) {
@@ -75,23 +76,26 @@ class ImportrController extends ActionController
             $this->view->assign('folder', $files);
         }
         $this->view->assign('imports', $this->importRepository->findUserQueue());
+
+        return $this->htmlResponse($this->view->render());
     }
 
     /**
      * @param string $identifier
      */
-    public function importAction($identifier)
+    public function importAction($identifier):ResponseInterface
     {
         $file = $this->resourceFactory->getObjectFromCombinedIdentifier($identifier);
         $this->view->assign('file', $file);
         $this->view->assign('strategies', $this->strategyRepository->findAllUser());
+        return $this->htmlResponse($this->view->render());
     }
 
     /**
      * @param string $identifier
      * @param \HDNET\Importr\Domain\Model\Strategy $strategy
      */
-    public function previewAction($identifier, Strategy $strategy)
+    public function previewAction($identifier, Strategy $strategy):ResponseInterface
     {
         $file = $this->resourceFactory->getObjectFromCombinedIdentifier($identifier);
         $this->view->assign('filepath', $file->getPublicUrl());
@@ -99,13 +103,14 @@ class ImportrController extends ActionController
 
         $previewData = $this->importManager->getPreview($strategy, $file->getPublicUrl());
         $this->view->assign('preview', $previewData);
+        return $this->htmlResponse($this->view->render());
     }
 
     /**
      * @param string $filepath
      * @param \HDNET\Importr\Domain\Model\Strategy $strategy
      */
-    public function createAction($filepath, Strategy $strategy)
+    public function createAction($filepath, Strategy $strategy):ResponseInterface
     {
         $this->importService->addToQueue($filepath, $strategy);
         $text = 'The Import file %s width the strategy %s was successfully added to the queue';
@@ -117,22 +122,22 @@ class ImportrController extends ActionController
             true
         );
 
-        $flashMessageService = $this->objectManager->get(
+        $flashMessageService = GeneralUtility::makeInstance(
             FlashMessageService::class
         );
         $messageQueue = $flashMessageService->getMessageQueueByIdentifier();
         $messageQueue->addMessage($message);
 
-        $this->redirect('index');
+        return $this->redirect('index');
     }
 
     /**
      * @param Import $import
      */
-    public function resetAction(Import $import)
+    public function resetAction(Import $import):ResponseInterface
     {
         $import->reset();
         $this->importRepository->update($import);
-        $this->redirect('index');
+        return $this->redirect('index');
     }
 }

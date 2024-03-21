@@ -8,7 +8,6 @@ namespace HDNET\Importr\Feature;
 
 use HDNET\Importr\Service\Manager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * Class FeatureRegistry
@@ -21,7 +20,6 @@ class FeatureRegistry
      */
     public static function enable($names, $class = Manager::class)
     {
-        $dispatcher = GeneralUtility::makeInstance(Dispatcher::class);
         if (!\is_array($names)) {
             $names = [$names];
         }
@@ -30,7 +28,8 @@ class FeatureRegistry
         $caller = $trace[1]['class'];
 
         foreach ($names as $name) {
-            $dispatcher->connect($class, $name, $caller, 'execute');
+            // @todo migrate to events
+            // $dispatcher->connect($class, $name, $caller, 'execute');
         }
     }
 }

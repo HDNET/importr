@@ -37,25 +37,8 @@ return [
         'configuration_file' => [
             'label' => 'LLL:EXT:importr/Resources/Private/Language/locallang.xlf:configuration_file',
             'config' => [
-                'type' => 'input',
-                'eval' => 'trim',
-                'max' => 256,
-                'size' => 60,
-                'softref' => 'typolink',
-                'wizards' => [
-                    'link' => [
-                        'icon' => 'EXT:backend/Resources/Public/Images/FormFieldWizard/wizard_link.gif',
-                        'title' => 'File',
-                        'type' => 'popup',
-                        'module' => [
-                            'name' => 'wizard_link',
-                            'urlParameters' => [
-                                'mode' => 'wizard',
-                            ],
-                        ],
-                    ],
-                    '_PADDING' => 2,
-                ],
+                'type' => 'link',
+                'allowedTypes' => ['file'],
             ],
         ],
         'resources' => [
@@ -69,25 +52,8 @@ return [
         'resources_file' => [
             'label' => 'LLL:EXT:importr/Resources/Private/Language/locallang.xlf:resources_file',
             'config' => [
-                'type' => 'input',
-                'eval' => 'trim',
-                'max' => 256,
-                'size' => 60,
-                'softref' => 'typolink',
-                'wizards' => [
-                    'link' => [
-                        'icon' => 'EXT:backend/Resources/Public/Images/FormFieldWizard/wizard_link.gif',
-                        'title' => 'File',
-                        'type' => 'popup',
-                        'module' => [
-                            'name' => 'wizard_link',
-                            'urlParameters' => [
-                                'mode' => 'wizard',
-                            ],
-                        ],
-                    ],
-                    '_PADDING' => 2,
-                ],
+                'type' => 'link',
+                'allowedTypes' => ['file'],
             ],
         ],
         'targets' => [
@@ -101,25 +67,8 @@ return [
         'targets_file' => [
             'label' => 'LLL:EXT:importr/Resources/Private/Language/locallang.xlf:targets_file',
             'config' => [
-                'type' => 'input',
-                'eval' => 'trim',
-                'max' => 256,
-                'size' => 60,
-                'softref' => 'typolink',
-                'wizards' => [
-                    'link' => [
-                        'icon' => 'EXT:backend/Resources/Public/Images/FormFieldWizard/wizard_link.gif',
-                        'title' => 'File',
-                        'type' => 'popup',
-                        'module' => [
-                            'name' => 'wizard_link',
-                            'urlParameters' => [
-                                'mode' => 'wizard',
-                            ],
-                        ],
-                    ],
-                    '_PADDING' => 2,
-                ],
+                'type' => 'link',
+                'allowedTypes' => ['file'],
             ],
         ],
         'general' => [

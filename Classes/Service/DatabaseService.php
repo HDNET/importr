@@ -20,10 +20,6 @@ class DatabaseService
      */
     public function getDatabaseConnection()
     {
-        if (VersionNumberUtility::convertVersionNumberToInteger(VersionNumberUtility::getNumericTypo3Version()) > 9005000) {
-            return GeneralUtility::makeInstance(DatabaseConnection::class);
-        }
-
-        return $GLOBALS['TYPO3_DB'];
+        return GeneralUtility::makeInstance(DatabaseConnection::class);
     }
 }

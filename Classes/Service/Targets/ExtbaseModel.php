@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace HDNET\Importr\Service\Targets;
 
 use HDNET\Importr\Domain\Model\Strategy;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 /**
@@ -31,21 +31,15 @@ class ExtbaseModel extends AbstractTarget implements TargetInterface
      */
     protected $persistenceManager;
 
-    /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
-     */
-    protected $objectManager;
 
     /**
      * ExtbaseModel constructor.
      *
      * @param \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface $persistenceManager
-     * @param \TYPO3\CMS\Extbase\Object\ObjectManagerInterface           $objectManager
      */
-    public function __construct(PersistenceManagerInterface $persistenceManager, ObjectManagerInterface $objectManager)
+    public function __construct(PersistenceManagerInterface $persistenceManager)
     {
         $this->persistenceManager = $persistenceManager;
-        $this->objectManager = $objectManager;
     }
 
     /**
@@ -77,7 +71,7 @@ class ExtbaseModel extends AbstractTarget implements TargetInterface
     public function processEntry(array $entry)
     {
         $configuration = $this->getConfiguration();
-        $this->repository = $this->objectManager->get($configuration['repository']);
+        $this->repository = GeneralUtility::makeInstance($configuration['repository']);
 
         $model = $this->mapModel($this->getModel(), $configuration['mapping'], $entry);
         $this->repository->add($model);

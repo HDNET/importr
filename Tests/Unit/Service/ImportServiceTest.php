@@ -7,7 +7,6 @@ use HDNET\Importr\Domain\Model\Import;
 use HDNET\Importr\Domain\Model\Strategy;
 use HDNET\Importr\Domain\Repository\ImportRepository;
 use HDNET\Importr\Service\ImportService;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
@@ -24,20 +23,14 @@ class ImportServiceTest extends UnitTestCase
      */
     protected $repository;
 
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
 
     public function setUp(): void
     {
         $persistenceManager = $this->getMockBuilder(PersistenceManagerInterface::class)->getMock();
-        $objectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
         $repository = $this->getMockBuilder(ImportRepository::class)->disableOriginalConstructor()->getMock();
         $this->repository = $repository;
-        $this->objectManager = $objectManager;
 
-        $this->fixture = new ImportService($persistenceManager, $objectManager, $repository);
+        $this->fixture = new ImportService($persistenceManager, $repository);
     }
 
     /**
@@ -70,9 +63,6 @@ class ImportServiceTest extends UnitTestCase
             return $date->format(\DateTime::ATOM) === $time;
         }));
 
-        $this->objectManager->expects(self::once())->method('get')->with(Import::class)->willReturnCallback(function () use ($import) {
-            return $import;
-        });
 
         $this->repository->expects(self::once())->method('add')->with(self::isInstanceOf(Import::class));
 
@@ -89,10 +79,6 @@ class ImportServiceTest extends UnitTestCase
         $path = './import.csv';
 
         $import->expects(self::once())->method('setStarttime')->with(self::isInstanceOf(\DateTime::class));
-
-        $this->objectManager->expects(self::once())->method('get')->with(Import::class)->willReturnCallback(function () use ($import) {
-            return $import;
-        });
 
         $this->fixture->addToQueue($path, $strategy, ['start' => 'Lorem ipsum']);
     }

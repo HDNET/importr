@@ -12,8 +12,6 @@ use HDNET\Importr\Service\Manager;
 use HDNET\Importr\Service\ManagerInterface;
 use HDNET\Importr\Service\Resources\ResourceInterface;
 use ReflectionClass;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
@@ -62,11 +60,6 @@ class ManagerTest extends UnitTestCase
         $resource->expects(self::any())->method('getEntry')->willReturn('test');
         $resource->expects(self::once())->method('getFilepathExpression')->willReturn('/\.csv$/');
 
-        $objectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
-        $objectManager->expects(self::once())->method('get')->willReturnCallback(function () use ($resource) {
-            return $resource;
-        });
-        $this->setProtectedProperty($manager, 'objectManager', $objectManager);
 
         $strategy = $this->getAccessibleMock(Strategy::class);
         $filepath = './import.csv';
@@ -86,7 +79,6 @@ class ManagerTest extends UnitTestCase
             $this->createMock(ImportRepository::class),
             $this->createMock(Dispatcher::class),
             $this->createMock(PersistenceManager::class),
-            $this->createMock(ObjectManager::class),
             $this->createMock(Configuration::class),
             $this->createMock(Resource::class)
         );

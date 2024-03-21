@@ -7,7 +7,7 @@ namespace HDNET\Importr\Service;
 use HDNET\Importr\Domain\Model\Import;
 use HDNET\Importr\Domain\Model\Strategy;
 use HDNET\Importr\Domain\Repository\ImportRepository;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 /**
@@ -20,10 +20,6 @@ class ImportService implements ImportServiceInterface
      */
     protected $persistenceManager;
 
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
 
     /**
      * @var ImportRepository
@@ -34,13 +30,11 @@ class ImportService implements ImportServiceInterface
      * ImportService constructor.
      *
      * @param PersistenceManagerInterface $persistenceManager
-     * @param ObjectManagerInterface      $objectManager
      * @param ImportRepository            $importRepository
      */
-    public function __construct(PersistenceManagerInterface $persistenceManager, ObjectManagerInterface $objectManager, ImportRepository $importRepository)
+    public function __construct(PersistenceManagerInterface $persistenceManager,  ImportRepository $importRepository)
     {
         $this->persistenceManager = $persistenceManager;
-        $this->objectManager = $objectManager;
         $this->importRepository = $importRepository;
     }
 
@@ -64,7 +58,7 @@ class ImportService implements ImportServiceInterface
      */
     public function addToQueue($filepath, Strategy $strategy, array $configuration = [])
     {
-        $import = $this->objectManager->get(Import::class);
+        $import = GeneralUtility::makeInstance(Import::class);
         $start = 'now';
         if (isset($configuration['start'])) {
             $start = $configuration['start'];

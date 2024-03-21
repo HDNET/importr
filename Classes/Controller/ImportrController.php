@@ -17,6 +17,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
@@ -71,7 +72,7 @@ class ImportrController extends ActionController
     {
         $viewVariables = [];
         $combinedIdentifier = GeneralUtility::_GP('id');
-        if (isset($combinedIdentifier) && \is_string($combinedIdentifier)) {
+        if (isset($combinedIdentifier) && \is_string($combinedIdentifier) && !MathUtility::canBeInterpretedAsInteger($combinedIdentifier)) {
             $folder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($combinedIdentifier);
             $files = [];
             foreach ($folder->getFiles() as $file) {
